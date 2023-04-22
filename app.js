@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const port = 3000;
 let newItems = ["Morning get up", "Ready for office", "Catch bus"];
+let anotherItems = [];
 
 const app = express();
 
@@ -20,15 +21,23 @@ app.get("/", (req, res) => {
     };
 
     let day = today.toLocaleDateString("en-GB", options);
-    res.render("list", {dayType: day, listItems: newItems});
+    res.render("list", {listTitle: day, listItems: newItems});
 });
 
 app.post("/", (req, res) => {
     let newEntry = req.body.newTask;
-    newItems.push(newEntry);
-    res.redirect("/");  
+    if (req.body.button === "Work") {
+        anotherItems.push(newEntry);
+        res.redirect("/work");
+    } else {
+        newItems.push(newEntry);
+        res.redirect("/");
+    }
 });
 
+app.get("/work", (req, res) => {
+    res.render("list", {listTitle: "Work List", listItems: anotherItems});
+});
 
 app.listen(port, () =>{
     console.log("The app is running at " + port);
